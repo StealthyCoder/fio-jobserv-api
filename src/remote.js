@@ -151,12 +151,13 @@ Remote.prototype.put = async function ({ path, body, query, options }) {
  * Perform a DELETE request.
  * @param {Object} data
  * @param {String} [data.path] - The path of the request.
+ * @param {String|Buffer} [data.body] - The data to send.
  * @param {Object} [data.query] - The query parameters.
  * @param {Object} [data.options] - Opitonal request configurations.
  * @returns {Promise}
  */
-Remote.prototype.delete = async function ({ path, query, options }) {
-  return this.fetch({ path, query, options, method: 'DELETE' });
+Remote.prototype.delete = async function ({ path, body, query, options }) {
+  return this.fetch({ path, body, query, options, method: 'DELETE' });
 };
 
 /**
