@@ -88,7 +88,7 @@ Remote.prototype.serialize = function (body) {
  * Perform the fetch request.
  * @param {Object} data
  * @param {String} [data.path] - The path of the request.
- * @param {String|Buffer} [data.body] - The data to send.
+ * @param {(String|Buffer)} [data.body] - The data to send.
  * @param {Object} [data.query] - The query parameters.
  * @param {Object} [data.options] - Opitonal request configurations.
  * @param {String} [data.method=GET] - The request method to perform.
@@ -124,7 +124,7 @@ Remote.prototype.get = async function ({ path, query, options }) {
 /**
  * Perform a POST request.
  * @param {Object} data
- * @param {String|Buffer} data.body - The data to send.
+ * @param {(String|Buffer)} data.body - The data to send.
  * @param {String} [data.path] - The path of the request.
  * @param {Object} [data.query] - The query parameters.
  * @param {Object} [data.options] - Opitonal request configurations.
@@ -137,7 +137,7 @@ Remote.prototype.post = async function ({ path, body, query, options }) {
 /**
  * Perform a PUT request.
  * @param {Object} data
- * @param {String|Buffer} data.body - The data to send.
+ * @param {(String|Buffer)} data.body - The data to send.
  * @param {String} [data.path] - The path of the request.
  * @param {Object} [data.query] - The query parameters.
  * @param {Object} [data.options] - Opitonal request configurations.
@@ -151,7 +151,7 @@ Remote.prototype.put = async function ({ path, body, query, options }) {
  * Perform a DELETE request.
  * @param {Object} data
  * @param {String} [data.path] - The path of the request.
- * @param {String|Buffer} [data.body] - The data to send.
+ * @param {(String|Buffer)} [data.body] - The data to send.
  * @param {Object} [data.query] - The query parameters.
  * @param {Object} [data.options] - Opitonal request configurations.
  * @returns {Promise}
@@ -163,7 +163,7 @@ Remote.prototype.delete = async function ({ path, body, query, options }) {
 /**
  * Perform a PATCH request.
  * @param {Object} data
- * @param {String|Buffer} data.body - The data to send.
+ * @param {(String|Buffer)} data.body - The data to send.
  * @param {String} [data.path] - The path of the request.
  * @param {Object} [data.query] - The query parameters.
  * @param {Object} [data.options] - Opitonal request configurations.
