@@ -103,12 +103,13 @@ JobServ.prototype.update = async function ({
  *
  * @param {Object} data
  * @param {String} data.path - The path of the request.
+ * @param {(Object|String|Buffer)} [data.data] - The data to send.
  * @param {Object} [data.query] - The query parameters.
  * @param {Object} [data.options] - Optional request configurations.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.remove = async function ({ path, query, options }) {
-  return createResponse(this.delete({ path, query, options }));
+JobServ.prototype.remove = async function ({ path, data, query, options }) {
+  return createResponse(this.delete({ path, body: data, query, options }));
 };
 
 export default JobServ;
