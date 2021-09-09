@@ -139,9 +139,9 @@ export const createResponse = async (request) => {
     return response;
   }
 
-  const err = new HTTPError(response.statusText);
-  err.status = response.status;
-  err.error = error_status_map[response.status];
+  const err = new HTTPError(response.statusText ?? 'HTTP Error');
+  err.status = response.status ?? 500;
+  err.error = error_status_map[err.status];
   err.text = await response.text();
   err.json = await response.json();
 
