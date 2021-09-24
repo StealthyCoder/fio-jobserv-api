@@ -56,7 +56,7 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
-    "node-fetch": "^2.6.2",
+    "node-fetch": "^2.6.5",
     "safe-regex": "^2.1.1"
   },
   "repository": {
