@@ -371,6 +371,18 @@ class Factories extends JobServ {
 }
 
 /**
+ * Retrieve a factory production targets.
+ * @param {Object} args
+ * @param {String} args.factory The factory name
+ * @param {Object} [args.query] Request query parameters
+ * @param {Object} [args.options] Request options
+ * @returns {Promise<Object>}
+ */
+Factories.prototype.prodTargets = function ({ factory, query, options }) {
+  return this.find({ path: `${factory}/prod-targets/`, query, options });
+};
+
+/**
  * Retrieve a factory status.
  * @param {Object} data
  * @param {String} data.factory - The name of the factory.
