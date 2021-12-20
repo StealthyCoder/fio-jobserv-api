@@ -32,11 +32,11 @@
     "test": "NODE_ENV=test mocha --check-leaks --inline-diffs --allow-uncaught --exit ./src/test"
   },
   "lint-staged": {
-    "src/**/*.+(js)": [
+    "*.(js|mjs)": [
       "eslint --config ./src/.eslintrc.json --fix",
       "prettier --write"
     ],
-    "src/**/*.+(md|css|scss|yaml)": [
+    "*.(md|css|scss|yaml)": [
       "prettier --write"
     ]
   },
