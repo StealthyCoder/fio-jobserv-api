@@ -1,6 +1,6 @@
 {
   "name": "@foundriesio/jobserv-api",
-  "version": "3.4.7",
+  "version": "3.4.8",
   "private": false,
   "description": "JobServ API for nodejs",
   "type": "module",
