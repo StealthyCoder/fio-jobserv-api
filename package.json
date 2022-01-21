@@ -43,11 +43,11 @@
   "author": "Milo Casagrande <milo@foundries.io>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "dotenv": "^11.0.0",
+    "dotenv": "^14.2.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-security": "^1.4.0",
     "husky": "^7.0.4",
-    "lint-staged": "^12.1.7",
+    "lint-staged": "^12.2.2",
     "mocha": "^9.1.4",
     "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
@@ -55,7 +55,7 @@
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
-    "node-fetch": "^2.6.6",
+    "node-fetch": "^2.6.7",
     "safe-regex": "^2.1.1"
   },
   "repository": {
