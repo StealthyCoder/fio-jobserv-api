@@ -17,50 +17,54 @@ export class JobServ extends Remote {
 
 /**
  * Retrieve all data at the specified path.
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Optional request configurations.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.list = async function ({ path, query, options }) {
-  return createResponse(this.get({ path, query, options }));
+JobServ.prototype.list = async function ({ path, query, options, fetchFn }) {
+  return createResponse(this.get({ path, query, options, fetchFn }));
 };
 
 /**
  * Get all data at the specified path.
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Optional request configurations.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.find = async function ({ path, query, options }) {
-  return createResponse(this.get({ path, query, options }));
+JobServ.prototype.find = async function ({ path, query, options, fetchFn }) {
+  return createResponse(this.get({ path, query, options, fetchFn }));
 };
 
 /**
  * Retrieve a resoruce by its id.
  *
- * @param {Object} data
- * @param {String} data.id - The resource id.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Optional request configurations.
+ * @param {Object} args
+ * @param {String} args.id - The resource id.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.findById = async function ({ id, query, options }) {
-  return createResponse(this.get({ path: id, query, options }));
+JobServ.prototype.findById = async function ({ id, query, options, fetchFn }) {
+  return createResponse(this.get({ path: id, query, options, fetchFn }));
 };
 
 /**
  * Create a resource on the server.
  *
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {(Object|String|Buffer)} data.data - The data to send (aliased as body). If an object, it will be serialized as json.
- * @param {(Object|String|Buffer)} [data.body] - The data to send.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Optional request configurations.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {(Object|String|Buffer)} args.data - The data to send (aliased as body). If an object, it will be serialized as json.
+ * @param {(Object|String|Buffer)} [args.body] - The data to send.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 JobServ.prototype.create = async function ({
@@ -69,21 +73,23 @@ JobServ.prototype.create = async function ({
   data,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
-    this.post({ path, body: data || body, query, options })
+    this.post({ path, body: data ?? body, query, options, fetchFn })
   );
 };
 
 /**
  * Update a resource on the server.
  *
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {(Object|String|Buffer)} data.data - The data to send (aliased as body). If an object, it will be serialized as json.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {(Object|String|Buffer)} args.data - The data to send (aliased as body). If an object, it will be serialized as json.
  * @param {(Object|String|Buffer)} [data.body] - The data to send.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Optional request configurations.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 JobServ.prototype.update = async function ({
@@ -92,24 +98,34 @@ JobServ.prototype.update = async function ({
   body,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
-    this.patch({ path, body: data || body, query, options })
+    this.patch({ path, body: data ?? body, query, options, fetchFn })
   );
 };
 
 /**
  * Remove a resource on the server.
  *
- * @param {Object} data
- * @param {String} data.path - The path of the request.
- * @param {(Object|String|Buffer)} [data.data] - The data to send.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Optional request configurations.
+ * @param {Object} args
+ * @param {String} args.path - The path of the request.
+ * @param {(Object|String|Buffer)} [args.data] - The data to send.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.remove = async function ({ path, data, query, options }) {
-  return createResponse(this.delete({ path, body: data, query, options }));
+JobServ.prototype.remove = async function ({
+  path,
+  data,
+  query,
+  options,
+  fetchFn,
+}) {
+  return createResponse(
+    this.delete({ path, body: data, query, options, fetchFn })
+  );
 };
 
 export default JobServ;

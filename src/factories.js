@@ -14,9 +14,8 @@ import createResponse from './response.js';
 /**
  * Create the correct target name to be retrieved.
  * Right now it's `[target]-lmp-[build]`.
- * @param {Object} data
- * @param {Object} data.run - The run name.
- * @param {Object} data.target - The build name/id (the target).
+ * @param {String} run - The run name.
+ * @param {String} target - The build name/id (the target).
  * @returns {String}
  */
 function createTargetName(run, target) {
@@ -42,17 +41,19 @@ class Waves extends JobServ {
 
 /**
  * List all waves for a factory.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Array>}
  */
-Waves.prototype.list = async function ({ factory, query, options }) {
+Waves.prototype.list = async function ({ factory, query, options, fetchFn }) {
   return this.find({
     path: `${factory}/${this.resourcePath}/`,
     query,
     options,
+    fetchFn,
   });
 };
 
@@ -63,13 +64,21 @@ Waves.prototype.list = async function ({ factory, query, options }) {
  * @param {String} args.wave - The name of the wave.
  * @param {Object} [args.query] - The request query parameters.
  * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Waves.prototype.retrieve = async function ({ factory, wave, query, options }) {
+Waves.prototype.retrieve = async function ({
+  factory,
+  wave,
+  query,
+  options,
+  fetchFn,
+}) {
   return this.find({
     path: `${factory}/${this.resourcePath}/${wave}/`,
     query,
     options,
+    fetchFn,
   });
 };
 
@@ -80,13 +89,21 @@ Waves.prototype.retrieve = async function ({ factory, wave, query, options }) {
  * @param {String} args.wave - The name of the wave.
  * @param {Object} [args.query] - The request query parameters.
  * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Waves.prototype.status = async function ({ factory, wave, query, options }) {
+Waves.prototype.status = async function ({
+  factory,
+  wave,
+  query,
+  options,
+  fetchFn,
+}) {
   return this.find({
     path: `${factory}/${this.resourcePath}/${wave}/status/`,
     query,
     options,
+    fetchFn,
   });
 };
 
@@ -97,14 +114,22 @@ Waves.prototype.status = async function ({ factory, wave, query, options }) {
  * @param {String} args.wave - The name of the wave.
  * @param {Object} [args.query] - The request query parameters.
  * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Waves.prototype.cancel = async function ({ factory, wave, query, options }) {
+Waves.prototype.cancel = async function ({
+  factory,
+  wave,
+  query,
+  options,
+  fetchFn,
+}) {
   return createResponse(
     this.post({
       path: `${factory}/${this.resourcePath}/${wave}/cancel/`,
       query,
       options,
+      fetchFn,
     })
   );
 };
@@ -116,14 +141,22 @@ Waves.prototype.cancel = async function ({ factory, wave, query, options }) {
  * @param {String} args.wave - The name of the wave.
  * @param {Object} [args.query] - The request query parameters.
  * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Waves.prototype.complete = async function ({ factory, wave, query, options }) {
+Waves.prototype.complete = async function ({
+  factory,
+  wave,
+  query,
+  options,
+  fetchFn,
+}) {
   return createResponse(
     this.post({
       path: `${factory}/${this.resourcePath}/${wave}/complete/`,
       query,
       options,
+      fetchFn,
     })
   );
 };
@@ -136,6 +169,7 @@ Waves.prototype.complete = async function ({ factory, wave, query, options }) {
  * @param {String} args.data - The data to send.
  * @param {Object} [args.query] - The request query parameters.
  * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Waves.prototype.rollout = async function ({
@@ -144,6 +178,7 @@ Waves.prototype.rollout = async function ({
   data,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.post({
@@ -151,6 +186,7 @@ Waves.prototype.rollout = async function ({
       body: data,
       query,
       options,
+      fetchFn,
     })
   );
 };
@@ -164,27 +200,35 @@ class DeviceGroups extends JobServ {
 
 /**
  * List all device groups for a factory.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Array>}
  */
-DeviceGroups.prototype.list = async function ({ factory, query, options }) {
+DeviceGroups.prototype.list = async function ({
+  factory,
+  query,
+  options,
+  fetchFn,
+}) {
   return this.find({
     path: `${factory}/device-groups/`,
     query,
     options,
+    fetchFn,
   });
 };
 
 /**
  * Create a new device group.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {Object} data.data - The data to send.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {Object} args.data - The data to send.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 DeviceGroups.prototype.create = async function ({
@@ -192,6 +236,7 @@ DeviceGroups.prototype.create = async function ({
   data,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.post({
@@ -199,18 +244,20 @@ DeviceGroups.prototype.create = async function ({
       body: data,
       query,
       options,
+      fetchFn,
     })
   );
 };
 
 /**
  * Update a device group.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {String} data.group - The name of the device group.
- * @param {Object} data.data - The data to send.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {String} args.group - The name of the device group.
+ * @param {Object} args.data - The data to send.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 DeviceGroups.prototype.update = async function ({
@@ -219,6 +266,7 @@ DeviceGroups.prototype.update = async function ({
   data,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.patch({
@@ -226,17 +274,19 @@ DeviceGroups.prototype.update = async function ({
       body: data,
       query,
       options,
+      fetchFn,
     })
   );
 };
 
 /**
  * Remove a device group from a factory.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {String} data.group - The name of the device group.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {String} args.group - The name of the device group.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
 DeviceGroups.prototype.remove = async function ({
@@ -244,12 +294,14 @@ DeviceGroups.prototype.remove = async function ({
   group,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.delete({
       path: `${factory}/device-groups/${group}/`,
       query,
       options,
+      fetchFn,
     })
   );
 };
@@ -263,12 +315,13 @@ class ComposeApps extends JobServ {
 
 /**
  * List all compose apps for a target.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {String} data.target - The name/id name of the build.
- * @param {String} data.run - The run name.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {String} args.target - The name/id name of the build.
+ * @param {String} args.run - The run name.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 ComposeApps.prototype.list = async function ({
@@ -277,23 +330,26 @@ ComposeApps.prototype.list = async function ({
   run,
   query,
   options,
+  fetchFn,
 }) {
   return this.find({
     path: `${factory}/targets/${createTargetName(run, target)}/compose-apps/`,
     query,
     options,
+    fetchFn,
   });
 };
 
 /**
  * Retrieve a compose app details.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {String} data.target - The name/id of the build.
- * @param {String} data.run - The run name.
- * @param {String} data.app - The name of the app.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {String} args.target - The name/id of the build.
+ * @param {String} args.run - The run name.
+ * @param {String} args.app - The name of the app.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 ComposeApps.prototype.retrieve = async function ({
@@ -303,6 +359,7 @@ ComposeApps.prototype.retrieve = async function ({
   app,
   query,
   options,
+  fetchFn,
 }) {
   return this.find({
     path: `${factory}/targets/${createTargetName(
@@ -311,6 +368,7 @@ ComposeApps.prototype.retrieve = async function ({
     )}/compose-apps/${app}/`,
     query,
     options,
+    fetchFn,
   });
 };
 
@@ -325,24 +383,26 @@ class Targets extends JobServ {
 
 /**
  * List all targets of a factory.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Targets.prototype.list = async function ({ factory, query, options }) {
-  return this.find({ path: `${factory}/targets/`, query, options });
+Targets.prototype.list = async function ({ factory, query, options, fetchFn }) {
+  return this.find({ path: `${factory}/targets/`, query, options, fetchFn });
 };
 
 /**
  * Get a target of a factory.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {String} data.target - The name/id of the build.
- * @param {String} data.run - The run name.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {String} args.target - The name/id of the build.
+ * @param {String} args.run - The run name.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Targets.prototype.retrieve = async function ({
@@ -351,11 +411,13 @@ Targets.prototype.retrieve = async function ({
   run,
   query,
   options,
+  fetchFn,
 }) {
   return this.find({
     path: `${factory}/targets/${createTargetName(run, target)}/`,
     query,
     options,
+    fetchFn,
   });
 };
 
@@ -376,22 +438,39 @@ class Factories extends JobServ {
  * @param {String} args.factory The factory name
  * @param {Object} [args.query] Request query parameters
  * @param {Object} [args.options] Request options
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Factories.prototype.prodTargets = function ({ factory, query, options }) {
-  return this.find({ path: `${factory}/prod-targets/`, query, options });
+Factories.prototype.prodTargets = function ({
+  factory,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.find({
+    path: `${factory}/prod-targets/`,
+    query,
+    options,
+    fetchFn,
+  });
 };
 
 /**
  * Retrieve a factory status.
- * @param {Object} data
- * @param {String} data.factory - The name of the factory.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Factories.prototype.status = async function ({ factory, query, options }) {
-  return this.find({ path: `${factory}/status/`, query, options });
+Factories.prototype.status = async function ({
+  factory,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.find({ path: `${factory}/status/`, query, options, fetchFn });
 };
 
 export default Factories;

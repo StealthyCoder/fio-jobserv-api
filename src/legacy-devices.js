@@ -19,8 +19,8 @@ class LegacyDevices extends JobServ {
 /**
  * Find all devices.
  */
-LegacyDevices.prototype.find = async function ({ query, options }) {
-  return createResponse(this.get({ query, options }));
+LegacyDevices.prototype.find = async function ({ query, options, fetchFn }) {
+  return createResponse(this.get({ query, options, fetchFn }));
 };
 
 /**
@@ -30,8 +30,11 @@ LegacyDevices.prototype.findByName = async function ({
   device,
   query,
   options,
+  fetchFn,
 }) {
-  return createResponse(this.get({ path: `${device}/`, query, options }));
+  return createResponse(
+    this.get({ path: `${device}/`, query, options, fetchFn })
+  );
 };
 
 /**
@@ -40,9 +43,14 @@ LegacyDevices.prototype.findByName = async function ({
  * @param {String} deviceName
  * @param {Object} query
  */
-LegacyDevices.prototype.updates = async function ({ device, query, options }) {
+LegacyDevices.prototype.updates = async function ({
+  device,
+  query,
+  options,
+  fetchFn,
+}) {
   return createResponse(
-    this.get({ path: `${device}/updates/`, query, options })
+    this.get({ path: `${device}/updates/`, query, options, fetchFn })
   );
 };
 
@@ -51,6 +59,7 @@ LegacyDevices.prototype.requestUpdate = async function ({
   stream,
   hash,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.put({
@@ -58,13 +67,19 @@ LegacyDevices.prototype.requestUpdate = async function ({
       body: { image: { hash } },
       query: { stream },
       options,
+      fetchFn,
     })
   );
 };
 
-LegacyDevices.prototype.remove = async function ({ device, stream, options }) {
+LegacyDevices.prototype.remove = async function ({
+  device,
+  stream,
+  options,
+  fetchFn,
+}) {
   return createResponse(
-    this.delete({ path: `${device}/`, query: { stream }, options })
+    this.delete({ path: `${device}/`, query: { stream }, options, fetchFn })
   );
 };
 
@@ -76,6 +91,7 @@ LegacyDevices.prototype.remove = async function ({ device, stream, options }) {
  * @param {(Object|String|Buffer)} data.data - The data to send (aliased as body). If an object, it will be serialized as json.
  * @param {(Object|String|Buffer)} [data.body] - The data to send.
  * @param {Object} [data.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 LegacyDevices.prototype.update = async function ({
@@ -84,6 +100,7 @@ LegacyDevices.prototype.update = async function ({
   data,
   body,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.patch({
@@ -91,6 +108,7 @@ LegacyDevices.prototype.update = async function ({
       body: data || body,
       query: { stream },
       options,
+      fetchFn,
     })
   );
 };

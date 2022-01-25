@@ -18,36 +18,51 @@ class Devices extends JobServ {
 
 /**
  * Find a device by its name.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Devices.prototype.findByName = async function ({ device, query, options }) {
-  return this.find({ path: `${device}/`, query, options });
+Devices.prototype.findByName = async function ({
+  device,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.find({ path: `${device}/`, query, options, fetchFn });
 };
 
 /**
  * Remove a device.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Devices.prototype.remove = async function ({ device, query, options }) {
-  return createResponse(this.delete({ path: `${device}/`, query, options }));
+Devices.prototype.remove = async function ({
+  device,
+  query,
+  options,
+  fetchFn,
+}) {
+  return createResponse(
+    this.delete({ path: `${device}/`, query, options, fetchFn })
+  );
 };
 
 /**
  * Update a device name.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {(Object|String|Buffer)} data.data - The data to send (aliased as body). If an object, it will be serialized as json.
- * @param {(Object|String|Buffer)} [data.body] - The data to send.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {(Object|String|Buffer)} args.data - The data to send (aliased as body). If an object, it will be serialized as json.
+ * @param {(Object|String|Buffer)} [args.body] - The data to send.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Devices.prototype.update = async function ({
@@ -56,40 +71,50 @@ Devices.prototype.update = async function ({
   body,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.patch({
       path: `${device}/`,
-      body: data || body,
+      body: data ?? body,
       query,
       options,
+      fetchFn,
     })
   );
 };
 
 /**
  * Retrieve all updates of a device.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Devices.prototype.getUpdates = async function ({ device, query, options }) {
+Devices.prototype.getUpdates = async function ({
+  device,
+  query,
+  options,
+  fetchFn,
+}) {
   return this.find({
     path: `${device}/updates/`,
     query,
     options,
+    fetchFn,
   });
 };
 
 /**
  * Retrieve events that took place during the update.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {String} data.correlationId - The update/correlation id.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {String} args.correlationId - The update/correlation id.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Devices.prototype.getUpdateEvents = async function ({
@@ -97,21 +122,24 @@ Devices.prototype.getUpdateEvents = async function ({
   correlationId,
   query,
   options,
+  fetchFn,
 }) {
   return this.find({
     path: `${device}/updates/${correlationId}/`,
     query,
     options,
+    fetchFn,
   });
 };
 
 /**
  * Retrieve the list of config settings defined for a device.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {String} data.update - The update name/id.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {String} args.update - The update name/id.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Devices.prototype.getUpdateById = async function ({
@@ -119,37 +147,47 @@ Devices.prototype.getUpdateById = async function ({
   update,
   query,
   options,
+  fetchFn,
 }) {
   return this.find({
     path: `${device}/updates/${update}/`,
     query,
     options,
+    fetchFn,
   });
 };
 
 /**
  * Retrieve the list of config settings defined for a device.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-Devices.prototype.createConfig = async function ({ device, query, options }) {
+Devices.prototype.createConfig = async function ({
+  device,
+  query,
+  options,
+  fetchFn,
+}) {
   return this.find({
     path: `${device}/config/`,
     query,
     options,
+    fetchFn,
   });
 };
 
 /**
  * Retrieve the list of config settings defined for a device.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {String} data.factory - The name of the factory.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {String} args.factory - The name of the factory.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Devices.prototype.getConfig = async function ({
@@ -157,23 +195,26 @@ Devices.prototype.getConfig = async function ({
   factory,
   query,
   options,
+  fetchFn,
 }) {
   return this.find({
     path: `${device}/config/`,
     factory,
     query,
     options,
+    fetchFn,
   });
 };
 
 /**
  * Update the device configuration with new content.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {(Object|String|Buffer)} data.data - The data to send (aliased as body). If an object, it will be serialized as json.
- * @param {(Object|String|Buffer)} [data.body] - The data to send.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {(Object|String|Buffer)} args.data - The data to send (aliased as body). If an object, it will be serialized as json.
+ * @param {(Object|String|Buffer)} [args.body] - The data to send.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Devices.prototype.updateConfig = async function ({
@@ -182,24 +223,27 @@ Devices.prototype.updateConfig = async function ({
   body,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.patch({
       path: `${device}/config/`,
-      body: data || body,
+      body: data ?? body,
       query,
       options,
+      fetchFn,
     })
   );
 };
 
 /**
  * Remove the config file from the configuration.
- * @param {Object} data
- * @param {String} data.device - The name of the device.
- * @param {String} data.config - The name of the config to remove.
- * @param {Object} [data.query] - The request query parameters.
- * @param {Object} [data.options] - Optional request options.
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {String} args.config - The name of the config to remove.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
 Devices.prototype.removeConfig = async function ({
@@ -207,12 +251,14 @@ Devices.prototype.removeConfig = async function ({
   config,
   query,
   options,
+  fetchFn,
 }) {
   return createResponse(
     this.delete({
       path: `${device}/config/${config}/`,
       query,
       options,
+      fetchFn,
     })
   );
 };

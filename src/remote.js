@@ -86,12 +86,13 @@ Remote.prototype.serialize = function (body) {
 
 /**
  * Perform the fetch request.
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {(String|Buffer)} [data.body] - The data to send.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
- * @param {String} [data.method=GET] - The request method to perform.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {(String|Buffer)} [args.body] - The data to send.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Opitonal request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String} [args.method=GET] - The request method to perform.
  * @returns {Promise}
  */
 Remote.prototype.fetch = async function ({
@@ -99,102 +100,148 @@ Remote.prototype.fetch = async function ({
   body,
   query,
   options,
+  fetchFn,
   method = 'GET',
 }) {
-  return fetch(this.createPath(path, query), {
-    method,
-    body: this.serialize(body),
-    ...DEFAULT_FETCH_OPTIONS,
-    ...options,
-  });
+  const remoteOptions = Object.assign({}, DEFAULT_FETCH_OPTIONS, options);
+  if (body) {
+    if (!remoteOptions.headers) {
+      remoteOptions.headers = {};
+      remoteOptions.headers['Content-type'] = this.contentType;
+    } else {
+      if (!Object.hasOwn(remoteOptions.headers, 'Content-Type')) {
+        remoteOptions.headers['Content-Type'] = this.contentType;
+      }
+    }
+  }
+
+  const fetchUrl = this.createPath(path, query);
+  const fetchOptions = { method, body: this.serialize(body), ...remoteOptions };
+
+  if (fetchFn && typeof fetchFn === 'function') {
+    return fetchFn(fetchUrl, fetchOptions);
+  }
+
+  return fetch(fetchUrl, fetchOptions);
 };
 
 /**
  * Perform a GET request.
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
-Remote.prototype.get = async function ({ path, query, options }) {
-  return this.fetch({ path, query, options });
+Remote.prototype.get = async function ({ path, query, options, fetchFn }) {
+  return this.fetch({ path, query, options, fetchFn });
 };
 
 /**
  * Perform a POST request.
- * @param {Object} data
- * @param {(String|Buffer)} data.body - The data to send.
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
+ * @param {Object} args
+ * @param {String|Buffer} args.body - The data to send.
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
-Remote.prototype.post = async function ({ path, body, query, options }) {
-  return this.fetch({ path, body, query, options, method: 'POST' });
+Remote.prototype.post = async function ({
+  path,
+  body,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.fetch({ path, body, query, options, fetchFn, method: 'POST' });
 };
 
 /**
  * Perform a PUT request.
- * @param {Object} data
- * @param {(String|Buffer)} data.body - The data to send.
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
+ * @param {Object} args
+ * @param {String|Buffer} args.body - The data to send.
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
-Remote.prototype.put = async function ({ path, body, query, options }) {
-  return this.fetch({ path, body, query, options, method: 'PUT' });
+Remote.prototype.put = async function ({
+  path,
+  body,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.fetch({ path, body, query, options, fetchFn, method: 'PUT' });
 };
 
 /**
  * Perform a DELETE request.
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {(String|Buffer)} [data.body] - The data to send.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {String|Buffer} [args.body] - The data to send.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
-Remote.prototype.delete = async function ({ path, body, query, options }) {
-  return this.fetch({ path, body, query, options, method: 'DELETE' });
+Remote.prototype.delete = async function ({
+  path,
+  body,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.fetch({ path, body, query, options, fetchFn, method: 'DELETE' });
 };
 
 /**
  * Perform a PATCH request.
- * @param {Object} data
- * @param {(String|Buffer)} data.body - The data to send.
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
+ * @param {Object} args
+ * @param {String|Buffer} args.body - The data to send.
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
-Remote.prototype.patch = async function ({ path, body, query, options }) {
-  return this.fetch({ path, body, query, options, method: 'PATCH' });
+Remote.prototype.patch = async function ({
+  path,
+  body,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.fetch({ path, body, query, options, fetchFn, method: 'PATCH' });
 };
 
 /**
  * Perform a HEAD request.
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
-Remote.prototype.head = async function ({ path, query, options }) {
-  return this.fetch({ path, query, options, method: 'HEAD' });
+Remote.prototype.head = async function ({ path, query, options, fetchFn }) {
+  return this.fetch({ path, query, options, fetchFn, method: 'HEAD' });
 };
 
 /**
  * Perform an OPTIONS request.
- * @param {Object} data
- * @param {String} [data.path] - The path of the request.
- * @param {Object} [data.query] - The query parameters.
- * @param {Object} [data.options] - Opitonal request configurations.
+ * @param {Object} args
+ * @param {String} [args.path] - The path of the request.
+ * @param {Object} [args.query] - The query parameters.
+ * @param {Object} [args.options] - Optional request configurations.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise}
  */
-Remote.prototype.options = async function ({ path, query, options }) {
-  return this.fetch({ path, query, options, method: 'OPTIONS' });
+Remote.prototype.options = async function ({ path, query, options, fetchFn }) {
+  return this.fetch({ path, query, options, fetchFn, method: 'OPTIONS' });
 };
 
 export default Remote;
