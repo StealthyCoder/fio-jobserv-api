@@ -3,11 +3,6 @@
     "ecmaVersion": 8,
     "sourceType": "script"
   },
-  "ecmaFeatures": {
-    "modules": false,
-    "spread": true,
-    "restParams": true
-  },
   "extends": [
     "eslint:recommended",
     "plugin:security/recommended"
