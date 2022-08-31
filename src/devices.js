@@ -263,4 +263,28 @@ Devices.prototype.removeConfig = async function ({
   );
 };
 
+
+/**
+ * Get the Apps States belonging to a device
+ * @param {Object} args
+ * @param {String} args.device - The name of the device.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @returns {Promise<Object>}
+ */
+Devices.prototype.getAppsStates = async function ({
+  device,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.find({
+    path: `${device}/apps-states/`,
+    query,
+    options,
+    fetchFn,
+  });
+};
+
 export default Devices;
