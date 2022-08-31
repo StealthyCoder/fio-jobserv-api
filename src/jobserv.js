@@ -42,7 +42,7 @@ JobServ.prototype.find = async function ({ path, query, options, fetchFn }) {
 };
 
 /**
- * Retrieve a resoruce by its id.
+ * Retrieve a resource by its id.
  *
  * @param {Object} args
  * @param {String} args.id - The resource id.
