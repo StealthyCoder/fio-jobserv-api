@@ -372,12 +372,79 @@ ComposeApps.prototype.retrieve = async function ({
   });
 };
 
+class Sboms extends JobServ {
+  constructor(address) {
+    super(address);
+    this.basePath = '/ota/factories/';
+  }
+}
+
+/**
+ * List all sboms for a target.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {String} args.target - The name/id name of the build.
+ * @param {String} args.run - The run name.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @returns {Promise<Object>}
+ */
+Sboms.prototype.list = async function ({
+  factory,
+  target,
+  run,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.find({
+    path: `${factory}/targets/${createTargetName(run, target)}/sboms/`,
+    query,
+    options,
+    fetchFn,
+  });
+};
+
+/**
+ * Retrieve list of SPDX packages for a specific SBOM.
+ * @param {Object} args
+ * @param {String} args.factory - The name of the factory.
+ * @param {String} args.target - The name/id of the build.
+ * @param {String} args.run - The run name.
+ * @param {String} args.sbomPath - The SPDIX package path.
+ * @param {Object} [args.query] - The request query parameters.
+ * @param {Object} [args.options] - Optional request options.
+ * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @returns {Promise<Object>}
+ */
+Sboms.prototype.retrieve = async function ({
+  factory,
+  target,
+  run,
+  sbomPath,
+  query,
+  options,
+  fetchFn,
+}) {
+  return this.find({
+    path: `${factory}/targets/${createTargetName(
+      run,
+      target
+    )}/sboms/${sbomPath}`,
+    query,
+    options,
+    fetchFn,
+  });
+};
+
 class Targets extends JobServ {
   constructor(address) {
     super(address);
     this.basePath = '/ota/factories/';
 
     this.ComposeApps = new ComposeApps(address);
+    this.Sboms = new Sboms(address);
   }
 }
 
