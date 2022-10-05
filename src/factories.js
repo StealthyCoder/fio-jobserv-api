@@ -402,7 +402,7 @@ Sboms.prototype.list = async function ({
 }) {
   return this.find({
     path: `${factory}/targets/${
-      tufTarget ?? createTargetName(run, target)
+      tufTarget || createTargetName(run, target)
     }/sboms/`,
     query,
     options,
@@ -414,8 +414,9 @@ Sboms.prototype.list = async function ({
  * Retrieve list of SPDX packages for a specific SBOM.
  * @param {Object} args
  * @param {String} args.factory - The name of the factory.
- * @param {String} args.target - The name/id of the build.
- * @param {String} args.run - The run name.
+ * @param {String} args.tufTarget - The name of the TUF target.
+ * @param {String} [args.run] - The run name.
+ * @param {String} [args.target] - The name of the build.
  * @param {String} args.sbomPath - The SPDIX package path.
  * @param {Object} [args.query] - The request query parameters.
  * @param {Object} [args.options] - Optional request options.
@@ -424,18 +425,18 @@ Sboms.prototype.list = async function ({
  */
 Sboms.prototype.retrieve = async function ({
   factory,
-  target,
+  tufTarget,
   run,
+  target,
   sbomPath,
   query,
   options,
   fetchFn,
 }) {
   return this.find({
-    path: `${factory}/targets/${createTargetName(
-      run,
-      target
-    )}/sboms/${sbomPath}`,
+    path: `${factory}/targets/${
+      tufTarget || createTargetName(run, target)
+    }/sboms/${sbomPath}`,
     query,
     options,
     fetchFn,
