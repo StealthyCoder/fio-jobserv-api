@@ -383,8 +383,9 @@ class Sboms extends JobServ {
  * List all sboms for a target.
  * @param {Object} args
  * @param {String} args.factory - The name of the factory.
- * @param {String} args.target - The name/id name of the build.
- * @param {String} args.run - The run name.
+ * @param {String} args.tufTarget - The name of the TUF target.
+ * @param {String} [args.run] - The run name.
+ * @param {String} [args.target] - The name of the build.
  * @param {Object} [args.query] - The request query parameters.
  * @param {Object} [args.options] - Optional request options.
  * @param {Function} [args.fetchFn] - Optional fetch function to use.
@@ -392,14 +393,17 @@ class Sboms extends JobServ {
  */
 Sboms.prototype.list = async function ({
   factory,
-  target,
   run,
+  target,
+  tufTarget,
   query,
   options,
   fetchFn,
 }) {
   return this.find({
-    path: `${factory}/targets/${createTargetName(run, target)}/sboms/`,
+    path: `${factory}/targets/${
+      tufTarget ?? createTargetName(run, target)
+    }/sboms/`,
     query,
     options,
     fetchFn,
