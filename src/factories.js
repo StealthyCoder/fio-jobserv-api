@@ -22,9 +22,10 @@ function createTargetName(run, target) {
   // eslint-disable-next-line security/detect-non-literal-regexp
   const targetCheck = new RegExp(`(${target})`, 'i');
   if (
-    /lmp-([a-zA-Z0-9-])*?\d+$/.test(run) &&
-    safeRegex(targetCheck) &&
-    targetCheck.test(run)
+    /^(.*)-lmp-(.*)$/.test(run) ||
+    (/lmp-([a-zA-Z0-9-])*?\d+$/.test(run) &&
+      safeRegex(targetCheck) &&
+      targetCheck.test(run))
   ) {
     return run;
   }
