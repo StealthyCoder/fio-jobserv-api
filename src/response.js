@@ -90,7 +90,7 @@ const remoteResponse = function (res) {
       const payload = await this.json();
 
       if (payload) {
-        const data = payload.data || payload; // hack is necessary as 'builds' and 'devices' api's differ
+        const data = payload.data ?? payload; // hack is necessary as 'builds' and 'devices' api's differ
         return {
           total: data.total,
           limit: data.limit,
