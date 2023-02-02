@@ -113,6 +113,13 @@ Remote.prototype.fetch = async function ({
         remoteOptions.headers['Content-Type'] = this.contentType;
       }
     }
+  } else {
+    if (!remoteOptions.headers) {
+      remoteOptions.headers = {};
+      remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
+    } else {
+      remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
+    }
   }
 
   const fetchUrl = this.createPath(path, query);
