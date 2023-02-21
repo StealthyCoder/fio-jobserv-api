@@ -103,22 +103,16 @@ Remote.prototype.fetch = async function ({
   method = 'GET',
 }) {
   const remoteOptions = Object.assign({}, DEFAULT_FETCH_OPTIONS, options);
-  if (body) {
-    if (!remoteOptions.headers) {
-      remoteOptions.headers = {};
-      remoteOptions.headers['Content-type'] = this.contentType;
-    } else {
-      if (!Object.hasOwn(remoteOptions.headers, 'Content-Type')) {
-        remoteOptions.headers['Content-Type'] = this.contentType;
-      }
-    }
+
+  if (!remoteOptions.headers) {
+    remoteOptions.headers = {};
+    remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
   } else {
-    if (!remoteOptions.headers) {
-      remoteOptions.headers = {};
-      remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
-    } else {
-      remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
-    }
+    remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
+  }
+
+  if (body && !Object.hasOwn(remoteOptions.headers, 'Content-Type')) {
+    remoteOptions.headers['Content-Type'] = this.contentType;
   }
 
   const fetchUrl = this.createPath(path, query);
