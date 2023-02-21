@@ -8,8 +8,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 
 import http from 'http';
 import https from 'https';
-import querystring from 'querystring';
-import url from 'url';
+import { URL } from 'node:url';
 
 import fetch from 'node-fetch';
 
@@ -53,17 +52,17 @@ Remote.prototype.createPath = function (path, query) {
 
   if (path) {
     const reqPath = `${this.basePath}${path}`.replace(/\/\//g, '/');
-    reqURL = new url.URL(reqPath, this.address);
+    reqURL = new URL(reqPath, this.address);
   } else {
-    reqURL = new url.URL(this.basePath, this.address);
+    reqURL = new URL(this.basePath, this.address);
   }
 
   if (query) {
-    const searchParams = new url.URLSearchParams(querystring.stringify(query));
-    reqURL.search = searchParams.toString();
+    const searchParams = new URLSearchParams(query);
+    reqURL.search = searchParams;
   }
 
-  return url.format(reqURL);
+  return reqURL.href;
 };
 
 /**
