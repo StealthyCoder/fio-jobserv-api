@@ -142,8 +142,7 @@ export const createResponse = async (request) => {
   const err = new HTTPError(response.statusText ?? 'HTTP Error');
   err.status = response.status ?? 500;
   err.error = error_status_map[err.status];
-  err.text = await response.text();
-  err.json = await response.json();
+  [err.text, err.json] = await Promise.all([response.text(), response.json()]);
 
   throw err;
 };
