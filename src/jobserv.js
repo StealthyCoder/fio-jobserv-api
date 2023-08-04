@@ -24,7 +24,12 @@ export class JobServ extends Remote {
  * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.list = async function ({ path, query, options, fetchFn }) {
+JobServ.prototype.list = async function ({
+  path,
+  query,
+  options,
+  fetchFn,
+} = {}) {
   return createResponse(this.get({ path, query, options, fetchFn }));
 };
 
@@ -37,7 +42,12 @@ JobServ.prototype.list = async function ({ path, query, options, fetchFn }) {
  * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.find = async function ({ path, query, options, fetchFn }) {
+JobServ.prototype.find = async function ({
+  path,
+  query,
+  options,
+  fetchFn,
+} = {}) {
   return createResponse(this.get({ path, query, options, fetchFn }));
 };
 
@@ -51,7 +61,12 @@ JobServ.prototype.find = async function ({ path, query, options, fetchFn }) {
  * @param {Function} [args.fetchFn] - Optional fetch function to use.
  * @returns {Promise<Object>}
  */
-JobServ.prototype.findById = async function ({ id, query, options, fetchFn }) {
+JobServ.prototype.findById = async function ({
+  id,
+  query,
+  options,
+  fetchFn,
+} = {}) {
   return createResponse(this.get({ path: id, query, options, fetchFn }));
 };
 
@@ -74,9 +89,9 @@ JobServ.prototype.create = async function ({
   query,
   options,
   fetchFn,
-}) {
+} = {}) {
   return createResponse(
-    this.post({ path, body: data ?? body, query, options, fetchFn })
+    this.post({ path, body: data ?? body, query, options, fetchFn }),
   );
 };
 
@@ -99,9 +114,9 @@ JobServ.prototype.update = async function ({
   query,
   options,
   fetchFn,
-}) {
+} = {}) {
   return createResponse(
-    this.patch({ path, body: data ?? body, query, options, fetchFn })
+    this.patch({ path, body: data ?? body, query, options, fetchFn }),
   );
 };
 
@@ -122,9 +137,9 @@ JobServ.prototype.remove = async function ({
   query,
   options,
   fetchFn,
-}) {
+} = {}) {
   return createResponse(
-    this.delete({ path, body: data, query, options, fetchFn })
+    this.delete({ path, body: data, query, options, fetchFn }),
   );
 };
 
