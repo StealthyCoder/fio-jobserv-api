@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Foundries.IO Ltd.
+Copyright 2020, 2021, 2022, 2023, 2024 Foundries.IO Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -8,6 +8,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 
 import http from 'http';
 import https from 'https';
+import path from 'node:path';
 import { URL } from 'node:url';
 
 import fetch from 'node-fetch';
@@ -43,16 +44,15 @@ class Remote {
 /**
  * Create the href string to perform the request.
  *
- * @param {String} path The path to append to the server URL.
- * @param {Object} query The query/search parameters.
+ * @param {String} pathname The path to append to the server URL
+ * @param {Object} query The query/search parameters
  * @returns {String}
  */
-Remote.prototype.createPath = function (path, query) {
+Remote.prototype.createPath = function (pathname, query) {
   let reqURL;
 
-  if (path) {
-    const reqPath = `${this.basePath}${path}`.replace(/\/\//g, '/');
-    reqURL = new URL(reqPath, this.address);
+  if (pathname) {
+    reqURL = new URL(path.join(this.basePath ?? '/', pathname), this.address);
   } else {
     reqURL = new URL(this.basePath, this.address);
   }
