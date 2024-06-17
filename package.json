@@ -62,7 +62,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/foundriesio/fio-jobserv-api.git"
+    "url": "git+https://github.com/foundriesio/fio-jobserv-api.git"
   },
   "bugs": {
     "url": "https://github.com/foundriesio/fio-jobserv-api/issues"
