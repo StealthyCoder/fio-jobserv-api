@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Foundries.IO Ltd.
+Copyright 2020, 2021, 2022, 2023, 2024 Foundries.IO Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,7 +10,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
  * Wrapper around a response object to provide a common interface for
  * the remote resources.
  *
- * @param {Promise} req - The request to perform, a Promise to be resolved.
+ * @param {Promise} req The request to perform, a Promise to be resolved
  * @returns {Object}
  */
 const remoteResponse = function (res) {
@@ -31,7 +31,7 @@ const remoteResponse = function (res) {
     async json() {
       if (this.isJson()) {
         if (!this._json) {
-          this._json = await this._res.json();
+          this._json = await this._res.body.json();
         }
         return this._json;
       }
@@ -39,7 +39,7 @@ const remoteResponse = function (res) {
     async text() {
       if (this.isText()) {
         if (!this._text) {
-          this._text = await this._res.text();
+          this._text = await this._res.body.text();
         }
         return this._text;
       }
@@ -48,22 +48,16 @@ const remoteResponse = function (res) {
       return this._res.headers;
     },
     get contentEncoding() {
-      return this.headers.get('content-encoding');
+      return this.headers['content-encoding'];
     },
     get contentType() {
-      return this.headers.get('content-type');
+      return this.headers['content-type'];
     },
     get length() {
-      return this.headers.get('content-length');
+      return this.headers['content-length'];
     },
     get status() {
-      return this._res.status;
-    },
-    get statusText() {
-      return this._res.statusText;
-    },
-    get ok() {
-      return this._res.ok;
+      return this._res.statusCode;
     },
     get raw() {
       return this._res;
@@ -74,9 +68,12 @@ const remoteResponse = function (res) {
       }
       return this._body;
     },
+    get ok() {
+      return 200 >= this.status < 300;
+    },
     async buffer() {
       if (!this._buffer) {
-        this._buffer = await this._res.buffer();
+        this._buffer = await this._res.arrayBuffer();
       }
       return this._buffer;
     },
@@ -130,7 +127,7 @@ class HTTPError extends Error {
 
 /**
  * Create a response object.
- * @param {Promise} request - A request to be resolved.
+ * @param {Promise} request A request to be resolved
  * @returns {Promise<Object>}
  */
 export const createResponse = async (request) => {

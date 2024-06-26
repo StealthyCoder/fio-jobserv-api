@@ -5,30 +5,18 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
-
-import http from 'http';
-import https from 'https';
 import path from 'node:path';
-import { URL } from 'node:url';
+import querystring from 'querystring';
 
-import fetch from 'node-fetch';
-
-const DEFAULT_HTTP_AGENT = new http.Agent({
-  keepAlive: true,
-});
-
-const DEFAULT_HTTPS_AGENT = new https.Agent({
-  keepAlive: true,
-});
+import { Agent, request } from 'undici';
 
 const DEFAULT_FETCH_OPTIONS = {
-  agent: function (_parsedUrl) {
-    if (_parsedUrl.protocol === 'http:') {
-      return DEFAULT_HTTP_AGENT;
-    }
-
-    return DEFAULT_HTTPS_AGENT;
-  },
+  dispatcher: new Agent({
+    keepAliveMaxTimeout: 12000e3,
+    keepAliveTimeout: 600e3,
+    pipelining: 10,
+  }),
+  maxRedirections: 5
 };
 
 class Remote {
@@ -42,27 +30,28 @@ class Remote {
 }
 
 /**
- * Create the href string to perform the request.
+ * Create the URL to perform the request to.
  *
  * @param {String} pathname The path to append to the server URL
  * @param {Object} query The query/search parameters
- * @returns {String}
+ * @returns {URL}
  */
-Remote.prototype.createPath = function (pathname, query) {
+Remote.prototype.createURL = function (pathname, query) {
   let reqURL;
 
   if (pathname) {
-    reqURL = new URL(path.join(this.basePath ?? '/', pathname), this.address);
+    const reqPath = new URL(path.join(this.basePath ?? '/', pathname), this.address);
+    reqURL = new URL(reqPath, this.address);
   } else {
     reqURL = new URL(this.basePath, this.address);
   }
 
   if (query) {
-    const searchParams = new URLSearchParams(query);
-    reqURL.search = searchParams;
+    const searchParams = new URLSearchParams(querystring.stringify(query));
+    reqURL.search = searchParams.toString();
   }
 
-  return reqURL.href;
+  return reqURL;
 };
 
 /**
@@ -106,13 +95,13 @@ Remote.prototype.fetch = async function ({
 
   if (!remoteOptions.headers) {
     remoteOptions.headers = {};
-    remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
+    remoteOptions.headers['user-agent'] = 'fio-jobserv-api/5.0.0';
   } else {
-    remoteOptions.headers['User-Agent'] = 'fio-jobserv-api/5.0.0';
+    remoteOptions.headers['user-agent'] = 'fio-jobserv-api/5.0.0';
   }
 
-  if (body && !Object.hasOwn(remoteOptions.headers, 'Content-Type')) {
-    remoteOptions.headers['Content-Type'] = this.contentType;
+  if (body && !Object.hasOwn(remoteOptions.headers, 'content-type')) {
+    remoteOptions.headers['content-type'] = this.contentType;
   }
 
   const fetchUrl = this.createPath(path, query);
@@ -122,7 +111,7 @@ Remote.prototype.fetch = async function ({
     return fetchFn(fetchUrl, fetchOptions);
   }
 
-  return fetch(fetchUrl, fetchOptions);
+    return request(fetchUrl, fetchOptions);
 };
 
 /**
