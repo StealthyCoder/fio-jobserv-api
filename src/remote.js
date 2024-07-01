@@ -5,19 +5,10 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
-import path from 'node:path';
+import { join as pathJoin} from 'node:path';
 import querystring from 'querystring';
 
-import { Agent, request } from 'undici';
-
-const DEFAULT_FETCH_OPTIONS = {
-  dispatcher: new Agent({
-    keepAliveMaxTimeout: 12000e3,
-    keepAliveTimeout: 600e3,
-    pipelining: 10,
-  }),
-  maxRedirections: 5
-};
+import { request } from 'undici';
 
 class Remote {
   constructor(address) {
@@ -40,8 +31,7 @@ Remote.prototype.createURL = function (pathname, query) {
   let reqURL;
 
   if (pathname) {
-    const reqPath = new URL(path.join(this.basePath ?? '/', pathname), this.address);
-    reqURL = new URL(reqPath, this.address);
+    reqURL = new URL(pathJoin(this.basePath ?? '/', pathname), this.address);
   } else {
     reqURL = new URL(this.basePath, this.address);
   }
@@ -57,7 +47,7 @@ Remote.prototype.createURL = function (pathname, query) {
 /**
  * Serialize the data as JSON.
  * If the data is String or Buffer, it will be returned as is.
- * @param {Object} body - The data to serialize.
+ * @param {Object} body The data to serialize
  * @return {Buffer|String}
  */
 Remote.prototype.serialize = function (body) {
@@ -75,12 +65,12 @@ Remote.prototype.serialize = function (body) {
 /**
  * Perform the fetch request.
  * @param {Object} args
- * @param {String} [args.path] - The path of the request.
- * @param {(String|Buffer)} [args.body] - The data to send.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Opitonal request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
- * @param {String} [args.method=GET] - The request method to perform.
+ * @param {String} [args.path] The path of the request
+ * @param {(String|Buffer)} [args.body] The data to send
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Opitonal request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
+ * @param {String} [args.method=GET] The request method to perform
  * @returns {Promise}
  */
 Remote.prototype.fetch = async function ({
@@ -91,7 +81,7 @@ Remote.prototype.fetch = async function ({
   fetchFn,
   method = 'GET',
 }) {
-  const remoteOptions = Object.assign({}, DEFAULT_FETCH_OPTIONS, options);
+  const remoteOptions = structuredClone(options);
 
   if (!remoteOptions.headers) {
     remoteOptions.headers = {};
@@ -104,7 +94,7 @@ Remote.prototype.fetch = async function ({
     remoteOptions.headers['content-type'] = this.contentType;
   }
 
-  const fetchUrl = this.createPath(path, query);
+  const fetchUrl = this.createURL(path, query);
   const fetchOptions = { method, body: this.serialize(body), ...remoteOptions };
 
   if (fetchFn && typeof fetchFn === 'function') {
@@ -117,10 +107,10 @@ Remote.prototype.fetch = async function ({
 /**
  * Perform a GET request.
  * @param {Object} args
- * @param {String} [args.path] - The path of the request.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Optional request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String} [args.path] The path of the request
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Optional request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
  * @returns {Promise}
  */
 Remote.prototype.get = async function ({ path, query, options, fetchFn }) {
@@ -130,11 +120,11 @@ Remote.prototype.get = async function ({ path, query, options, fetchFn }) {
 /**
  * Perform a POST request.
  * @param {Object} args
- * @param {String|Buffer} args.body - The data to send.
- * @param {String} [args.path] - The path of the request.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Optional request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String|Buffer} args.body The data to send
+ * @param {String} [args.path] The path of the request
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Optional request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
  * @returns {Promise}
  */
 Remote.prototype.post = async function ({
@@ -150,11 +140,11 @@ Remote.prototype.post = async function ({
 /**
  * Perform a PUT request.
  * @param {Object} args
- * @param {String|Buffer} args.body - The data to send.
- * @param {String} [args.path] - The path of the request.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Optional request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String|Buffer} args.body The data to send
+ * @param {String} [args.path] The path of the request
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Optional request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
  * @returns {Promise}
  */
 Remote.prototype.put = async function ({
@@ -170,11 +160,11 @@ Remote.prototype.put = async function ({
 /**
  * Perform a DELETE request.
  * @param {Object} args
- * @param {String} [args.path] - The path of the request.
- * @param {String|Buffer} [args.body] - The data to send.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Optional request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String} [args.path] The path of the request
+ * @param {String|Buffer} [args.body] The data to send
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Optional request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
  * @returns {Promise}
  */
 Remote.prototype.delete = async function ({
@@ -190,11 +180,11 @@ Remote.prototype.delete = async function ({
 /**
  * Perform a PATCH request.
  * @param {Object} args
- * @param {String|Buffer} args.body - The data to send.
- * @param {String} [args.path] - The path of the request.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Optional request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String|Buffer} args.body The data to send
+ * @param {String} [args.path] The path of the request
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Optional request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
  * @returns {Promise}
  */
 Remote.prototype.patch = async function ({
@@ -210,10 +200,10 @@ Remote.prototype.patch = async function ({
 /**
  * Perform a HEAD request.
  * @param {Object} args
- * @param {String} [args.path] - The path of the request.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Optional request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String} [args.path] The path of the request
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Optional request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
  * @returns {Promise}
  */
 Remote.prototype.head = async function ({ path, query, options, fetchFn }) {
@@ -223,10 +213,10 @@ Remote.prototype.head = async function ({ path, query, options, fetchFn }) {
 /**
  * Perform an OPTIONS request.
  * @param {Object} args
- * @param {String} [args.path] - The path of the request.
- * @param {Object} [args.query] - The query parameters.
- * @param {Object} [args.options] - Optional request configurations.
- * @param {Function} [args.fetchFn] - Optional fetch function to use.
+ * @param {String} [args.path] The path of the request
+ * @param {Object} [args.query] The query parameters
+ * @param {Object} [args.options] Optional request configurations
+ * @param {Function} [args.fetchFn] Optional fetch function to use
  * @returns {Promise}
  */
 Remote.prototype.options = async function ({ path, query, options, fetchFn }) {

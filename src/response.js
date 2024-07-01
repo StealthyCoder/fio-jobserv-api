@@ -31,7 +31,7 @@ const remoteResponse = function (res) {
     async json() {
       if (this.isJson()) {
         if (!this._json) {
-          this._json = await this._res.body.json();
+          this._json = JSON.parse(new TextDecoder().decode(await this.buffer()));
         }
         return this._json;
       }
@@ -39,7 +39,7 @@ const remoteResponse = function (res) {
     async text() {
       if (this.isText()) {
         if (!this._text) {
-          this._text = await this._res.body.text();
+          this._text = new TextDecoder().decode(await this.buffer());
         }
         return this._text;
       }
@@ -73,7 +73,7 @@ const remoteResponse = function (res) {
     },
     async buffer() {
       if (!this._buffer) {
-        this._buffer = await this._res.arrayBuffer();
+        this._buffer = await this._res.body.arrayBuffer();
       }
       return this._buffer;
     },
