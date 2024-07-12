@@ -69,7 +69,10 @@ const remoteResponse = function (res) {
       return this._body;
     },
     get ok() {
-      return 200 >= this.status < 300;
+      if (this.status >= 200 && this.status < 300) {
+        return true;
+      }
+      return false;
     },
     async buffer() {
       if (!this._buffer) {
