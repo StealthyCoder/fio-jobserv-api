@@ -6,6 +6,8 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
 
+import { Mutex } from 'async-mutex';
+
 /**
  * Wrapper around a response object to provide a common interface for
  * the remote resources.
@@ -22,6 +24,8 @@ const remoteResponse = function (res) {
 
   _res = res;
 
+  const responseMutex = new Mutex();
+
   const apiResponse = {
     _body,
     _buffer,
@@ -29,20 +33,26 @@ const remoteResponse = function (res) {
     _text,
     _res,
     async json() {
-      if (this.isJson()) {
-        if (!this._json) {
-          this._json = JSON.parse(new TextDecoder().decode(await this.buffer()));
+      return responseMutex.runExclusive(async () => {
+        if (this.isJson()) {
+          if (!this._json) {
+            this._json = JSON.parse(new TextDecoder().decode(await this.buffer()));
+          }
+          return this._json;
         }
-        return this._json;
-      }
+        return;
+      });
     },
     async text() {
-      if (this.isText()) {
-        if (!this._text) {
-          this._text = new TextDecoder().decode(await this.buffer());
+      return responseMutex.runExclusive(async () => {
+        if (this.isText()) {
+          if (!this._text) {
+            this._text = new TextDecoder().decode(await this.buffer());
+          }
+          return this._text;
         }
-        return this._text;
-      }
+        return;
+      });
     },
     get headers() {
       return this._res.headers;
