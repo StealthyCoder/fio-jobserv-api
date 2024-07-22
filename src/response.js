@@ -101,12 +101,13 @@ const remoteResponse = function (res) {
 
       if (payload) {
         const data = payload.data ?? payload; // hack is necessary as 'builds' and 'devices' api's differ
+        const { total, limit, pages, page } = data;
         return {
-          total: data.total,
-          limit: data.limit,
-          pages: data.pages,
-          current: data.page,
-          next: data.page + 1 > data.pages ? null : data.page + 1,
+          total,
+          limit,
+          pages,
+          current: page,
+          next: page + 1 > pages ? null : page + 1,
         };
       }
 
