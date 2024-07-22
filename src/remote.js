@@ -81,7 +81,7 @@ Remote.prototype.fetch = async function ({
   fetchFn,
   method = 'GET',
 }) {
-  const remoteOptions = structuredClone(options);
+  const remoteOptions = structuredClone(options ?? {});
 
   if (!remoteOptions.headers) {
     remoteOptions.headers = {};
